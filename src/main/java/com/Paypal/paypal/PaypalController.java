@@ -3,6 +3,7 @@ package com.Paypal.paypal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.paypal.api.payments.Links;
@@ -42,5 +43,27 @@ public class PaypalController {
 			}
 		}
 		return new RedirectView("/payment/error");
+	}
+	
+	@GetMapping("/payment/success")
+	public String paymentSuccess(@RequestParam("paymentId") String paymentId, @RequestParam("payerId") String payerId) throws PayPalRESTException {
+		
+		Payment payment = paypalService.executePayment(paymentId, payerId);
+		
+		if(payment.getState().equals("approved")) {
+			return "paymentSuccess";
+		}
+		
+		return "paymentSuccess";
+	}
+	
+	@GetMapping("/payment/cancel")
+	public String paymentCancel() {
+		return "paymentCancel";
+	}
+	
+	@GetMapping("/payment/error")
+	public String paymentError() {
+		return "paymentError";
 	}
 }
